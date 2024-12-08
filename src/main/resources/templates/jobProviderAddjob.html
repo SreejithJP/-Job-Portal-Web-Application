@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Provider Dashboard</title>
+   <link rel="stylesheet" href="/styles.css">
+	
+
+</head>
+<body>
+    <!-- Static Header -->
+    <div class="header">
+        Job Provider Dashboard
+    </div>
+
+    <!-- Sidebar Navigation -->
+	<div class="sidebar">
+	    <a href="/job-provider/home">Home</a>
+	    <a href="/job-provider/addjob">Add New Job</a>
+	    <a href="/job-provider/profile/view">Profile</a>
+	    <a href="/job-provider/about">About</a>
+	</div>
+
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        
+		<!-- Add Job Section -->
+		<div id="addJob" class="content-section section-container">
+		    <h2>Add New Job</h2>
+		    <div class="success-message" id="successMessage"></div>
+		    <form id="addJobForm">
+		        <div class="form-group">
+		            <label for="title">Job Title:</label>
+		            <input type="text" id="title" name="title" required>
+		        </div>
+
+		        <div class="form-group">
+		            <label for="location">Location:</label>
+		            <input type="text" id="location" name="location" required>
+		        </div>
+
+		        <div class="form-group">
+		            <label for="experience">Experience (years):</label>
+		            <input type="number" id="experience" name="experience" min="0" required>
+		        </div>
+
+		        <div class="form-group">
+		            <label for="skills">Required Skills:</label>
+		            <input type="text" id="skills" name="skills" placeholder="Comma-separated" required>
+		        </div>
+
+		        <div class="form-group">
+		            <label for="description">Job Description:</label>
+		            <textarea id="description" name="description" rows="5" required></textarea>
+		        </div>
+
+		        <button type="submit" class="submit-btn">Add Job</button>
+		    </form>
+		</div>
+
+
+		
+    <!-- JavaScript to Handle Form Submission and Navigation -->
+    <script>
+		// Check if loginStatus is true on page load
+		    document.addEventListener('DOMContentLoaded', function() {
+		        const loginStatus = localStorage.getItem('loginStatus');
+				console.log(loginStatus);
+				
+		        // If loginStatus is not true, redirect to the login page
+		        if (loginStatus !== 'true') {
+		            console.log('User is not logged in. Redirecting to login page.');
+		            window.location.href = '/auth/login';  // Redirect to login page
+		        } else {
+		            console.log('User is logged in.');
+		        }
+		    });
+        // Form submission handling remains unchanged...
+		document.addEventListener('DOMContentLoaded', function () {
+		    // Get the form element
+		    const form = document.getElementById('addJobForm');
+
+		    // Handle the form submission event
+		    form.addEventListener('submit', function (event) {
+		        event.preventDefault();  // Prevent default form submission (page reload)
+
+		        // Collect form data
+		        const jobData = {
+		            title: document.getElementById('title').value.trim(),
+		            location: document.getElementById('location').value.trim(),
+		            experience: parseInt(document.getElementById('experience').value),
+		            requiredSkills: document.getElementById('skills').value.split(',').map(skill => skill.trim()),
+		            description: document.getElementById('description').value.trim()
+		        };
+
+		        // Send the data to the server using fetch API
+		        fetch('/job-provider/add-job', {
+		            method: 'POST',
+		            headers: {
+		                'Content-Type': 'application/json'
+		            },
+		            body: JSON.stringify(jobData)  // Convert the jobData object to a JSON string
+		        })
+		        .then(response => {
+		            if (response.ok) {
+		                return response.json();  // Parse the JSON response
+		            } else {
+		                throw new Error('Failed to add job');  // Handle non-OK responses
+		            }
+		        })
+		        .then(data => {
+		            // Display success message
+		            document.getElementById('successMessage').innerText = 'Job added successfully!';
+		            document.getElementById('successMessage').style.display = 'block';
+
+		            // Optionally, clear the form fields
+		            form.reset();
+
+		            // Refresh the job listings or switch to the home section
+		            
+		        })
+		        .catch(error => {
+		            console.error('Error:', error);
+		            alert('There was an error adding the job. Please try again.');
+		        });
+		    });
+		});
+
+		document.addEventListener('DOMContentLoaded', function() {
+		    // Get the current URL path
+		    const currentPath = window.location.pathname;
+
+		    // Select all sidebar links
+		    const links = document.querySelectorAll('.sidebar a');
+
+		    // Loop through links and set the active class on the matching link
+		    links.forEach(link => {
+		        if (link.getAttribute('href') === currentPath) {
+		            link.classList.add('active');  // Add 'active' class to the current link
+		        }
+		    });
+		});
+
+       
+    </script>
+</body>
+</html>

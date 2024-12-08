@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicants</title>
+	<link rel="stylesheet" href="/styles.css"> 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .applicant-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+	<!-- Static Header -->
+	    <div class="header">
+	        Job Provider Dashboard
+	    </div>
+
+	    <!-- Sidebar Navigation -->
+		<div class="sidebar">
+		    <a href="/job-provider/home">Home</a>
+		    <a href="/job-provider/addjob">Add New Job</a>
+		    <a href="/job-provider/profile/view">Profile</a>
+		    <a href="/job-provider/about">About</a>
+		</div>
+
+
+	    <!-- Main Content Area -->
+	    <div class="main-content">
+	        <!-- Home Section -->
+	        <div id="home" class="content-section">
+				<h2>Applicants List</h2>
+				    <div id="applicantsContainer"></div>
+	        </div>
+
+			
+    
+
+    <script>
+		// Fetch and display applicants based on jobId
+		document.addEventListener('DOMContentLoaded', function() {
+		    const params = new URLSearchParams(window.location.search);
+		    const jobId = params.get('jobId');  // Extract jobId from URL query parameters
+
+		    if (jobId) {
+		        fetch(`/job-provider/job-applications/view?jobId=${jobId}`)
+		            .then(response => {
+		                if (!response.ok) {
+		                    throw new Error('Failed to fetch applicants. Please try again.');
+		                }
+		                return response.json();  // Parse the response JSON
+		            })
+		            .then(applicants => {
+		                console.log(applicants);  // Debugging: Log the applicants data to the console
+		                if (applicants.length > 0) {
+		                    displayApplicants(applicants);
+		                } else {
+		                    document.getElementById('applicantsContainer').innerText = 'No applicants found for this job.';
+		                }
+		            })
+		            .catch(error => {
+		                console.error('Error fetching applicants:', error);
+		                document.getElementById('applicantsContainer').innerText = 'Error loading applicants. Please try again later.';
+		            });
+		    } else {
+		        document.getElementById('applicantsContainer').innerText = 'Invalid job ID.';
+		    }
+		});
+
+		// Function to display applicants in the HTML
+		function displayApplicants(applicants) {
+		    const container = document.getElementById('applicantsContainer');
+		    container.innerHTML = '';  // Clear any existing content
+		    
+		    applicants.forEach(applicant => {
+		        const applicantCard = document.createElement('div');
+		        applicantCard.classList.add('applicant-card');
+		        
+				const experience = applicant.jobseekerExperience ? applicant.jobseekerExperience : 'N/A';
+
+
+		        applicantCard.innerHTML = `
+		            <p><strong>Name:</strong> ${applicant.jobseekerName || 'N/A'}</p>
+		            <p><strong>Email:</strong> ${applicant.jobseekerEmail || 'N/A'}</p>
+		            <p><strong>Experience:</strong> ${experience} years</p>
+		            <p><strong>Skills:</strong> ${applicant.skills ? applicant.skills.join(', ') : 'N/A'}</p>
+		        `;
+		        container.appendChild(applicantCard);
+		    });
+		}
+
+
+    </script>
+</body>
+</html>

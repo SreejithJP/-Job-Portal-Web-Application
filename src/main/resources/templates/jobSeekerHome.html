@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Seeker Dashboard - Home</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Link to external CSS -->
+	<style>
+		/* Apply button styling */
+		.apply-btn {
+		    background-color: #006DB5; /* Deep blue color */
+		    color: white;
+		    padding: 10px 15px;
+		    border: none;
+		    border-radius: 6px;
+		    cursor: pointer;
+		    font-size: 14px;
+		    transition: background-color 0.3s ease;
+		}
+
+		.apply-btn:hover {
+		    background-color: #005A92; /* Slightly darker blue on hover */
+		}
+
+		/* Applied button styling */
+		.applied-btn {
+		    background-color: #d3d3d3; /* Light grey mix */
+		    color: #666; /* Darker text */
+		    padding: 10px 15px;
+		    border: none;
+		    border-radius: 6px;
+		    font-size: 14px;
+		    cursor: not-allowed; /* Indicate that the button is disabled */
+		}
+
+	</style>
+</head>
+<body>
+    <!-- Static Header -->
+    <div class="header">
+        Job Seeker Dashboard
+    </div>
+	
+	<div class="sidebar">
+		    <a href="/job-seeker/home">Home</a>
+			<a href="/job-seeker/appliedJobs">Applied Jobs</a>
+		    <a href="/job-seeker/profile/view">Profile</a>
+		    <a href="/job-seeker/about">About</a>
+		</div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <h2>Welcome to Your Job Dashboard</h2>
+		<div class="filter-container" style="margin-bottom: 20px;">
+		    <!-- Search Bar -->
+		    <input type="text" id="searchInput" placeholder="Search jobs by title..." 
+		        style="padding: 10px; width: 300px; margin-right: 10px;">
+
+		    <!-- Location Dropdown -->
+			<select id="locationFilter" style="padding: 10px; margin-right: 10px;">
+			    <option value="">Filter by Location</option>
+			    <option value="Bangalore">Bangalore</option>
+			    <option value="Hyderabad">Hyderabad</option>
+			    <option value="Pune">Pune</option>
+			    <option value="Chennai">Chennai</option>
+			    <option value="Mumbai">Mumbai</option>
+			    <option value="Delhi">Delhi</option>
+			    <option value="Gurgaon">Gurgaon</option>
+			    <option value="Noida">Noida</option>
+			    <option value="Kolkata">Kolkata</option>
+			    <option value="Ahmedabad">Ahmedabad</option>
+			    <option value="Kochi">Kochi</option>
+			    <option value="Kozhikode">Kozhikode</option>
+			    <option value="Trivandrum">Trivandrum</option>
+			    <option value="Indore">Indore</option>
+			    <option value="Surat">Surat</option>
+			    <option value="Jaipur">Jaipur</option>
+			    <option value="Chandigarh">Chandigarh</option>
+			    <option value="Lucknow">Lucknow</option>
+			    <option value="Visakhapatnam">Visakhapatnam</option>
+			    <option value="Coimbatore">Coimbatore</option>
+			    <option value="Nagpur">Nagpur</option>
+			    <option value="Mysore">Mysore</option>
+			    <option value="Bhubaneswar">Bhubaneswar</option>
+			</select>
+
+
+		    <!-- Experience Dropdown -->
+		    <select id="experienceFilter" style="padding: 10px; margin-right: 10px;">
+		        <option value="">Filter by Experience</option>
+		        <option value="0">Fresher</option>
+		        <option value="1">1+ years</option>
+		        <option value="2">2+ years</option>
+		        <option value="3">3+ years</option>
+				<option value="4">4+ years</option>
+				<option value="6">6+ years</option>
+				<option value="10">10+ years</option>
+		    </select>
+
+		    <!-- Apply Filter Button -->
+		    <button onclick="applyFilters()" 
+		        style="padding: 10px 15px; background-color: #006DB5; color: white; border: none; cursor: pointer;">
+		        Apply Filters
+		    </button>
+		</div>
+
+        <!-- Add job listing content here -->
+		<!-- Container for job listings -->
+		        <div id="jobContainer"></div>
+
+    </div>
+	<script>
+	        // Check if loginStatus is true on page load
+	        document.addEventListener('DOMContentLoaded', function() {
+	            const loginStatus = localStorage.getItem('loginStatus');
+	            console.log(loginStatus);
+
+	            // If loginStatus is not true, redirect to the login page
+	            if (loginStatus !== 'true') {
+	                console.log('User is not logged in. Redirecting to login page.');
+	                window.location.href = '/auth/login';  // Redirect to login page
+	            } else {
+					
+					const emailtry=localStorage.getItem('email');
+					console.log("email is set : ",emailtry);
+	                console.log('User is logged in.');
+	            }
+	        });
+
+	        // Check if the session is active
+	        document.addEventListener('DOMContentLoaded', function() {
+	            fetch('/auth/check-session')
+	                .then(response => {
+	                    if (!response.ok) {
+	                        // If session is not active, redirect to the login page
+	                        window.location.href = '/auth/login';
+	                    }
+	                })
+	                .catch(error => {
+	                    console.error('Error checking session:', error);
+	                    window.location.href = '/auth/login'; // Redirect to login on error as a fallback
+	                });
+	        });
+
+	        // Fetch job listings on page load
+	        document.addEventListener('DOMContentLoaded', function() {
+	            fetchJobs();  // Fetch job data when the page loads
+	        });
+			let allJobs = []; // Store all fetched jobs globally
+
+			// Function to apply filters
+			function applyFilters() {
+			    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+			    const selectedLocation = document.getElementById('locationFilter').value;
+			    const selectedExperience = document.getElementById('experienceFilter').value;
+
+			    // Filter jobs based on user input
+			    const filteredJobs = allJobs.filter(job => {
+			        const matchesSearch = searchQuery === "" || job.title.toLowerCase().includes(searchQuery);
+			        const matchesLocation = selectedLocation === "" || job.location === selectedLocation;
+
+			        // Safely handle experience filtering
+			        const jobExperience = Number(job.experience) || 0; // Ensure job.experience is numeric
+			        const matchesExperience = selectedExperience === "" || jobExperience >= Number(selectedExperience);
+
+			        return matchesSearch && matchesLocation && matchesExperience;
+			    });
+
+			    // Re-display jobs based on filters
+			    displayJobs(filteredJobs);
+			}
+
+	        // Function to fetch jobs from the server
+			function fetchJobs() {
+			    fetch('http://localhost:8080/job-seeker/show-jobs')
+			        .then(response => response.json())
+			        .then(data => {
+			            allJobs = data; // Store fetched jobs
+			            displayJobs(allJobs); // Display jobs
+			        })
+			        .catch(error => console.error('Error fetching job data:', error));
+			}
+
+	        // Function to display the jobs on the page
+			function displayJobs(jobs) {
+			    const container = document.getElementById('jobContainer');
+			    container.innerHTML = '';  // Clear existing content
+			    console.log('Job container cleared.');
+
+			    const jobSeekerEmail = localStorage.getItem('email');  // Retrieve job-seeker email from local storage
+			    console.log('Retrieved job-seeker email from localStorage:', jobSeekerEmail);
+
+			    jobs.forEach((job, index) => {
+			        console.log(`Processing job ${index + 1}:`, job);
+
+			        // Check if the job has an applicants array and whether the current user has applied
+			        const hasApplied = job.applicants && job.applicants.some(applicant => {
+			            console.log(`Checking applicant: ${applicant.jobseekerEmail} against job-seeker email: ${jobSeekerEmail}`);
+			            return applicant.jobseekerEmail === jobSeekerEmail;
+			        });
+
+			        console.log(`User has ${hasApplied ? 'already applied' : 'not applied'} for job ID: ${job.id}`);
+
+			        // Create a job card for each job
+			        const jobCard = document.createElement('div');
+			        jobCard.classList.add('job-card');
+					jobCard.innerHTML = `
+					    <div class="job-details">
+					        <h3>${job.title}</h3>
+					        <p><strong>Company:</strong> ${job.companyName}</p>
+					        <p><strong>Location:</strong> ${job.location}</p>
+					        <p><strong>Experience:</strong> ${job.experience} years</p>
+					        <p><strong>Required Skills:</strong> ${job.requiredSkills.join(', ')}</p>
+					        <p><strong>Description:</strong> ${job.description}</p>
+					    </div>
+					    <div class="applicant-count">${job.applicants ? job.applicants.length : 0}</div>
+					    ${hasApplied 
+					        ? '<button class="applied-btn" disabled>Applied</button>' 
+					        : `<button class="apply-btn" data-job-id="${job.id}" onclick="applyForJob('${job.id}')">Apply</button>`}
+					    <div class="apply-status" id="applyStatus-${job.id}" style="color: green; margin-top: 10px;"></div>
+					`;
+
+
+			        container.appendChild(jobCard);
+			        console.log(`Job card for job ID: ${job.id} appended to container.`);
+			    });
+
+			    console.log('All jobs processed and displayed.');
+			}
+
+
+
+
+			// Function to apply for a job
+			// Function to apply for a job
+			function applyForJob(jobId) {
+			    // Retrieve job seeker details from localStorage
+			    const jobSeekerId = localStorage.getItem('jobSeekerId');  // Assume this is stored at login
+			    const jobSeekerName = localStorage.getItem('jobSeekerName');
+			    const jobSeekerEmail = localStorage.getItem('email');  // User's email for comparison
+			    const jobSeekerSkills = JSON.parse(localStorage.getItem('jobSeekerSkills'));  // Assuming an array
+			    const jobSeekerExperience = localStorage.getItem('jobSeekerExperience');
+
+			    // Construct the application object
+			    const applicationData = {
+			        jobId: jobId,
+			        jobSeekerId: jobSeekerId,
+			        jobseekerName: jobSeekerName,
+			        jobseekerEmail: jobSeekerEmail,
+			        skills: jobSeekerSkills,
+			        jobSeekerExperience: jobSeekerExperience
+			    };
+
+			    // Send the application data to the server
+			    fetch('http://localhost:8080/job-seeker/apply', {
+			        method: 'POST',
+			        headers: {
+			            'Content-Type': 'application/json'
+			        },
+			        body: JSON.stringify(applicationData)
+			    })
+			    .then(response => {
+			        if (!response.ok) {
+			            throw new Error('Application failed');
+			        }
+			        return response.json();
+			    })
+			    .then(data => {
+			        // Show success message and update the button
+					const button = document.querySelector(`button.apply-btn[data-job-id="${jobId}"]`);
+
+			      //  const button = document.querySelector(`.apply-btn[data-job-id="${jobId}"]`);
+			        if (button) {
+			            button.innerText = 'Applied';
+			            button.disabled = true;
+			            button.classList.remove('apply-btn');  // Optional: Remove apply class
+			            button.classList.add('applied-btn');   // Optional: Add applied class for styling
+			        }
+
+			        const statusElement = document.getElementById(`applyStatus-${jobId}`);
+			        statusElement.innerText = data.message || 'Application successful!';
+			        statusElement.style.color = 'green';
+			    })
+			    .catch(error => {
+			        console.error('Error applying for the job:', error);
+			        const statusElement = document.getElementById(`applyStatus-${jobId}`);
+			        statusElement.style.color = 'red';
+			        statusElement.innerText = 'Failed to apply. Please try again.';
+			    });
+			}
+			
+			document.addEventListener('DOMContentLoaded', function() {
+						    // Get the current URL path
+						    const currentPath = window.location.pathname;
+
+						    // Select all sidebar links
+						    const links = document.querySelectorAll('.sidebar a');
+
+						    // Loop through links and set the active class on the matching link
+						    links.forEach(link => {
+						        if (link.getAttribute('href') === currentPath) {
+						            link.classList.add('active');  // Add 'active' class to the current link
+						        }
+						    });
+						});
+
+	    </script>
+</body>
+</html>

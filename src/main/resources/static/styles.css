@@ -1,0 +1,243 @@
+ /* General styling for all sections */
+	   
+
+	    .section-container {
+	        background-color: white;
+	        padding: 30px;
+	        border-radius: 8px;
+	        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	        max-width: 600px;
+	        margin: 50px auto;
+	        font-family: Arial, sans-serif;
+	        color: #333;
+	    }
+
+	    .section-container h2 {
+	        text-align: left;
+	        color: #333;
+	        font-size: 24px;
+	        margin-bottom: 20px;
+	        border-bottom: 2px solid #ddd;
+	        padding-bottom: 10px;
+	    }
+		/* Active link styling */
+		.sidebar a.active {
+		    background-color: #006DB5;  /* Highlight color */
+		    color: white;  /* Text color */
+		    font-weight: bold;  /* Optional: Bold text */
+		    text-decoration: underline;  /* Adds an underline */
+		    text-decoration-thickness: 2px;  /* Adjust the thickness of the underline */
+		    text-decoration-color: white;  /* Color of the underline */
+		    text-underline-offset: 4px;  /* Adjust the space between text and underline */
+		}
+
+
+	    .form-group {
+	        margin-bottom: 20px;
+	    }
+
+	    .form-group label {
+	        display: block;
+	        font-weight: bold;
+	        margin-bottom: 5px;
+	        color: #333;
+	    }
+
+	    .form-group input[type="text"],
+	    .form-group input[type="number"],
+	    .form-group textarea {
+	        width: 100%;
+	        padding: 10px;
+	        border: 1px solid #ccc;
+	        border-radius: 6px;
+	        font-size: 16px;
+	        box-sizing: border-box;
+	    }
+
+	    .submit-btn {
+	        background-color: #006DB5;
+	        color: white;
+	        padding: 12px 24px;
+	        border: none;
+	        border-radius: 6px;
+	        cursor: pointer;
+	        font-size: 18px;
+	        display: block;
+	        width: 100%;
+	        transition: background-color 0.3s ease;
+	    }
+
+	    .submit-btn:hover {
+	        background-color: #2980b9;
+	    }
+
+	    .success-message {
+	        background-color: #28a745;
+	        color: white;
+	        padding: 12px;
+	        border-radius: 6px;
+	        text-align: center;
+	        margin-bottom: 20px;
+	        display: none;
+	    }
+
+	    .profile-detail {
+	        margin-bottom: 15px;
+	        font-size: 16px;
+	        color: #555;
+	    }
+
+	    .profile-detail strong {
+	        display: block;
+	        font-weight: bold;
+	        margin-bottom: 5px;
+	        color: #333;
+	    }
+
+	    .profile-detail span {
+	        color: #666;
+	    }
+
+	    .logout-btn {
+	        background-color: #006DB5;
+	        color: white;
+	        padding: 12px 24px;
+	        border: none;
+	        border-radius: 6px;
+	        cursor: pointer;
+	        font-size: 16px;
+	        display: block;
+	        width: 50%;
+	        text-align: center;
+	        margin-top: 20px;
+	        transition: background-color 0.3s ease;
+	    }
+
+	    .logout-btn:hover {
+	        background-color: #00559A;
+	    }
+
+
+        /* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none; /* Remove underline from links */
+}
+
+body {
+    display: flex;
+    flex-direction: column;  /* Stack header, content, and footer vertically */
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+/* Static Header */
+.header {
+    height: 80px;  /* Adjusted height */
+    width: 100%;
+    position: fixed;
+    top: 0;
+    background-color: #2c3e50;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    z-index: 1000;
+}
+
+/* Sidebar (Sider) */
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding-top: 100px; /* Space for header */
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    padding: 15px 20px;
+    font-size: 18px;
+}
+
+.sidebar a:hover {
+    background-color: #006DB5;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 250px; /* Space for sidebar */
+    padding: 100px 20px 60px; /* Top padding for header, bottom padding for footer */
+    flex-grow: 1;
+    overflow-y: auto; /* Ensure scrolling if content is large */
+}
+
+/* Job Listing Styles */
+.job-container .add-job-btn {
+    float: right;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.job-card {
+    display: flex;
+    justify-content: space-between;  /* Align elements horizontally */
+    align-items: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    position: relative;  /* For positioning child elements */
+}
+
+.job-details {
+    flex: 1;  /* Take up remaining space */
+}
+
+.applicant-count {
+    font-size: 24px;  /* Larger text size for applicant count */
+    font-weight: bold;
+    color: #2c3e50;
+    margin-left: 20px;  /* Space between job details and applicant count */
+}
+
+
+/* Footer */
+.footer {
+    background-color: #34495e;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+/* Profile and About Sections */
+.profile-btn-group button {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px 10px 0 0;
+}
+
+.profile-btn-group button:first-child {
+    background-color: #f39c12;
+}

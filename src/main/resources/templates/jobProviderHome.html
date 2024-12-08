@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Provider Dashboard</title>
+    <link rel="stylesheet" href="/styles.css">  Link to external CSS -->
+	<style>
+		/* See Applicants Button Styling */
+		.see-applicants-btn {
+		    background-color: #006DB5; /* Button color */
+		    color: white;             /* Text color */
+		    padding: 10px 15px;       /* Padding for consistent size */
+		    border: none;
+		    border-radius: 6px;
+		    cursor: pointer;
+		    font-size: 14px;
+		    transition: background-color 0.3s ease;
+		}
+
+		.see-applicants-btn:hover {
+		    background-color: #005A92; /* Slightly darker shade on hover */
+		}
+
+	</style>
+</head>
+<body>
+    <!-- Static Header -->
+    <div class="header">
+        Job Provider Dashboard
+    </div>
+
+    <!-- Sidebar Navigation -->
+	<div class="sidebar">
+	    <a href="/job-provider/home">Home</a>
+	    <a href="/job-provider/addjob">Add New Job</a>
+	    <a href="/job-provider/profile/view">Profile</a>
+	    <a href="/job-provider/about">About</a>
+	</div>
+
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Home Section -->
+        <div id="home" class="content-section">
+            <h2>Job Listings</h2>
+            <div id="jobContainer"></div>
+        </div>
+
+		
+
+    <!-- JavaScript to Handle Form Submission and Navigation -->
+    <script>
+		// Check if loginStatus is true on page load
+		// Check if loginStatus is true on page load
+				    document.addEventListener('DOMContentLoaded', function() {
+				        const loginStatus = localStorage.getItem('loginStatus');
+						console.log(loginStatus);
+						
+
+				        // If loginStatus is not true, redirect to the login page
+				        if (loginStatus !== 'true') {
+				            console.log('User is not logged in. Redirecting to login page.');
+				            window.location.href = '/auth/login';  // Redirect to login page
+				        } else {
+				            console.log('User is logged in.');
+				        }
+				    });
+		document.addEventListener('DOMContentLoaded', function() {
+		    // Check if the session is active
+		    fetch('/auth/check-session')
+		        .then(response => {
+		            if (!response.ok) {
+		                // If session is not active, redirect to the login page
+		                window.location.href = '/auth/login';
+		            }
+		        })
+		        .catch(error => {
+		            console.error('Error checking session:', error);
+		            // Redirect to login on error as a fallback
+		            window.location.href = '/auth/login';
+		        });
+		});
+
+		// Fetch job listings on page load
+		document.addEventListener('DOMContentLoaded', function() {
+		    
+		    // Fetch jobs 
+		    fetchJobs();
+			// Check if the user is logged in
+			
+		});
+
+		function fetchJobs() {
+		    fetch('http://localhost:8080/job-provider/show-jobs')
+		        .then(response => response.json())
+		        .then(data => displayJobs(data))
+		        .catch(error => console.error('Error fetching job data:', error));
+		}
+
+		function displayJobs(jobs) {
+		    const container = document.getElementById('jobContainer');
+		    container.innerHTML = '';  // Clear existing content
+
+		    jobs.forEach(job => {
+		        // Ensure applicants is an array; if not, default to an empty array
+		        const applicantsCount = job.applicants ? job.applicants.length : 0;
+
+		        const jobCard = document.createElement('div');
+		        jobCard.classList.add('job-card');
+		        jobCard.innerHTML = `
+		            <div class="job-details">
+		                <h3>${job.title}</h3>
+		                <p><strong>Company:</strong> ${job.companyName}</p>
+		                <p><strong>Location:</strong> ${job.location}</p>
+		                <p><strong>Experience:</strong> ${job.experience} years</p>
+		                <p><strong>Required Skills:</strong> ${job.requiredSkills.join(', ')}</p>
+		                <p><strong>Description:</strong> ${job.description}</p>
+		            </div>
+		            <div class="applicant-count">${applicantsCount}</div> <!-- Applicant count on the right -->
+		            <button class="see-applicants-btn" onclick="viewApplicants('${job.id}')">See Applicants</button>
+		        `;
+		        container.appendChild(jobCard);
+		    });
+		}
+
+		// Function to handle button click and redirect
+		function viewApplicants(jobId) {
+		    console.log(jobId);
+		    localStorage.setItem('selectedJobId', jobId);
+		    window.location.href = `/job-provider/job-applications?jobId=${jobId}`;
+		}
+
+
+
+		// Sidebar active link functionality
+		document.addEventListener('DOMContentLoaded', function() {
+		    const currentPath = window.location.pathname;
+		    const links = document.querySelectorAll('.sidebar a');
+
+		    links.forEach(link => {
+		        if (link.getAttribute('href') === currentPath) {
+		            link.classList.add('active');
+		        }
+		    });
+		});
+
+		
+    </script>
+</body>
+</html>

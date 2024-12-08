@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Provider Dashboard</title>
+  <link rel="stylesheet" href="/styles.css"> 
+	<style>
+		/* Profile Container - Flexbox Layout */
+		.profile-container {
+		    display: flex;
+		    width: 100%;
+		    gap: 20px; /* Space between Profile and Edit sections */
+		}
+
+		/* Both Profile and Edit Sections */
+		.profile-section, 
+		.edit-profile-section {
+		    flex: 1; /* Equal width for both sections */
+		    background-color: #f9f9f9;
+		    padding: 20px;
+		    border-radius: 8px;
+		    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		    box-sizing: border-box;
+		}
+
+		h2 {
+		    font-size: 20px;
+		    margin-bottom: 15px;
+		    color: #333;
+		}
+
+		.profile-detail {
+		    margin-bottom: 10px;
+		}
+
+		.profile-detail strong {
+		    color: #333;
+		    font-weight: bold;
+		}
+
+		.profile-detail span {
+		    color: #666;
+		}
+
+		/* Form Input Styling */
+		.form-group {
+		    margin-bottom: 15px;
+		}
+
+		.form-group label {
+		    display: block;
+		    margin-bottom: 5px;
+		    font-weight: bold;
+		}
+
+		.form-group input {
+		    width: 100%;
+		    padding: 8px;
+		    border: 1px solid #ccc;
+		    border-radius: 5px;
+		}
+
+		/* Button Styling */
+		.btn {
+		    background-color: #006DB5;
+		    color: white;
+		    padding: 10px 15px;
+		    border: none;
+		    border-radius: 5px;
+		    cursor: pointer;
+		    transition: background-color 0.3s;
+		    margin-right: 10px;
+		}
+
+		.btn:hover {
+		    background-color: #005A9E;
+		}
+
+		.save-btn {
+		    background-color: #2ecc71;
+		}
+
+		.save-btn:hover {
+		    background-color: #27ae60;
+		}
+
+		.cancel-btn {
+		    background-color: #e74c3c;
+		}
+
+		.cancel-btn:hover {
+		    background-color: #c0392b;
+		}
+
+		/* Hide Element */
+		.hidden {
+		    display: none;
+		}
+
+
+	</style>
+</head>
+<body>
+    <!-- Static Header -->
+    <div class="header">
+        Job Provider Dashboard
+    </div>
+
+    <!-- Sidebar Navigation -->
+	<div class="sidebar">
+	    <a href="/job-provider/home">Home</a>
+	    <a href="/job-provider/addjob">Add New Job</a>
+	    <a href="/job-provider/profile/view">Profile</a>
+	    <a href="/job-provider/about">About</a>
+	</div>
+
+
+	<!-- Main Content Area -->
+	<div class="main-content">
+	    <div class="profile-container">
+	        <!-- Left: Profile Section -->
+	        <div class="profile-section">
+	            <h2>Profile</h2>
+	            <div class="profile-detail">
+	                <strong>Provider Name:</strong>
+	                <span id="providerName"></span>
+	            </div>
+	            <div class="profile-detail">
+	                <strong>Email:</strong>
+	                <span id="providerEmail"></span>
+	            </div>
+	            <div class="profile-detail">
+	                <strong>Location:</strong>
+	                <span id="providerLocation"></span>
+	            </div>
+	            <div class="profile-detail">
+	                <strong>Address:</strong>
+	                <span id="providerAddress"></span>
+	            </div>
+	            <div class="profile-detail">
+	                <strong>Established Date:</strong>
+	                <span id="providerEstablishedDate"></span>
+	            </div>
+	            <div class="profile-detail">
+	                <strong>Business Type:</strong>
+	                <span id="providerBusinessType"></span>
+	            </div>
+	            <div class="profile-detail">
+	                <strong>Industry Type:</strong>
+	                <span id="providerIndustryType"></span>
+	            </div>
+	            <div class="profile-detail">
+	                <strong>Contact Number:</strong>
+	                <span id="providerContactNumber"></span>
+	            </div>
+				<!-- Buttons inside Profile Section -->
+				    <button class="btn" onclick="toggleEditForm()">Edit Profile</button>
+				    <button class="btn logout-btn" onclick="logout()">Logout</button>
+	        </div>
+
+	        <!-- Right: Edit Profile Section -->
+	        <div class="edit-profile-section hidden">
+	            <h2>Edit Profile</h2>
+	            <form id="editProfileForm" onsubmit="updateProfile(event)">
+	                <!-- Non-editable Fields -->
+	                <div class="form-group">
+	                    <label for="editProviderName">Provider Name:</label>
+	                    <input type="text" id="editProviderName" disabled>
+	                </div>
+	                <div class="form-group">
+	                    <label for="editProviderEmail">Email:</label>
+	                    <input type="email" id="editProviderEmail" disabled>
+	                </div>
+
+	                <!-- Editable Fields -->
+	                <div class="form-group">
+	                    <label for="editLocation">Location:</label>
+	                    <input type="text" id="editLocation" required>
+	                </div>
+	                <div class="form-group">
+	                    <label for="editAddress">Address:</label>
+	                    <input type="text" id="editAddress" required>
+	                </div>
+	                <div class="form-group">
+	                    <label for="editEstablishedDate">Established Date:</label>
+	                    <input type="date" id="editEstablishedDate" required>
+	                </div>
+	                <div class="form-group">
+	                    <label for="editBusinessType">Business Type:</label>
+	                    <input type="text" id="editBusinessType" required>
+	                </div>
+	                <div class="form-group">
+	                    <label for="editIndustryType">Industry Type:</label>
+	                    <input type="text" id="editIndustryType" required>
+	                </div>
+	                <div class="form-group">
+	                    <label for="editContactNumber">Contact Number:</label>
+	                    <input type="tel" id="editContactNumber" required>
+	                </div>
+
+	                <!-- Save and Cancel Buttons -->
+	                <button type="submit" class="btn save-btn">Save Changes</button>
+	                <button type="button" class="btn cancel-btn" onclick="toggleEditForm()">Cancel</button>
+	            </form>
+	        </div>
+	    </div>
+	</div>
+
+		
+
+    <!-- JavaScript to Handle Form Submission and Navigation -->
+    <script>
+		// Check if loginStatus is true on page load
+		    document.addEventListener('DOMContentLoaded', function() {
+		        const loginStatus = localStorage.getItem('loginStatus');
+				console.log(loginStatus);
+
+		        // If loginStatus is not true, redirect to the login page
+		        if (loginStatus !== 'true') {
+		            console.log('User is not logged in. Redirecting to login page.');
+		            window.location.href = '/auth/login';  // Redirect to login page
+		        } else {
+		            console.log('User is logged in.');
+		        }
+		    });
+		// Check if user is logged in before showing the page content
+		document.addEventListener('DOMContentLoaded', function() {
+		    // Check if the session is active
+		    fetch('/auth/check-session')
+		        .then(response => {
+		            if (!response.ok) {
+		                // If session is not active, redirect to the login page
+		                window.location.href = '/auth/login';
+		            }
+		        })
+		        .catch(error => {
+		            console.error('Error checking session:', error);
+		            // Redirect to login on error as a fallback
+		            window.location.href = '/auth/login';
+		        });
+		});
+		
+		// Toggle Edit Form Visibility
+		function toggleEditForm() {
+		    const editSection = document.querySelector('.edit-profile-section'); // Select by class
+		    editSection.classList.toggle('hidden');
+		    preloadEditForm(); // Load current data into form
+		}
+
+
+		// Preload Form Data with Current Profile Details
+		function preloadEditForm() {
+		    fetch('http://localhost:8080/job-provider/profile')
+		        .then(response => response.json())
+		        .then(data => {
+		            document.getElementById('editProviderName').value = data.companyName;
+		            document.getElementById('editProviderEmail').value = data.email;
+		            document.getElementById('editLocation').value = data.location;
+		            document.getElementById('editAddress').value = data.address;
+		            document.getElementById('editEstablishedDate').value = data.establishedDate;
+		            document.getElementById('editBusinessType').value = data.businessType;
+		            document.getElementById('editIndustryType').value = data.industryType;
+		            document.getElementById('editContactNumber').value = data.contactNumber;
+		        })
+		        .catch(error => console.error('Error loading form data:', error));
+		}
+
+		// Update Profile Function
+		function updateProfile(event) {
+		    event.preventDefault(); // Prevent form reload
+
+		    // Collect Updated Form Data
+		    const updatedProfile = {
+		        location: document.getElementById('editLocation').value,
+		        address: document.getElementById('editAddress').value,
+		        establishedDate: document.getElementById('editEstablishedDate').value,
+		        businessType: document.getElementById('editBusinessType').value,
+		        industryType: document.getElementById('editIndustryType').value,
+		        contactNumber: document.getElementById('editContactNumber').value
+		    };
+
+		    // Send PUT Request to Update Profile
+		    fetch('http://localhost:8080/job-provider/profile/update', {
+		        method: 'PUT',
+		        headers: {
+		            'Content-Type': 'application/json'
+		        },
+		        body: JSON.stringify(updatedProfile)
+		    })
+		    .then(response => {
+		        if (!response.ok) {
+		            throw new Error('Failed to update profile');
+		        }
+		        return response.text();
+		    })
+		    .then(message => {
+		        alert(message || 'Profile updated successfully!');
+		        toggleEditForm(); // Hide form
+		        fetchProfile();   // Refresh displayed profile data
+		    })
+		    .catch(error => {
+		        console.error('Error updating profile:', error);
+		        alert('An error occurred while updating the profile. Please try again.');
+		    });
+		}
+
+	
+		document.addEventListener('DOMContentLoaded', fetchProfile);
+		// Fetch profile details
+		function fetchProfile() {
+		    fetch('http://localhost:8080/job-provider/profile')
+		        .then(response => response.json())
+		        .then(data => {
+		            // Update the profile with the fetched data
+		            document.getElementById('providerName').innerText = data.companyName;
+		            document.getElementById('providerEmail').innerText = data.email;
+		            document.getElementById('providerLocation').innerText = data.location;
+		            document.getElementById('providerAddress').innerText = data.address;
+		            document.getElementById('providerEstablishedDate').innerText = data.establishedDate;
+		            document.getElementById('providerBusinessType').innerText = data.businessType;
+		            document.getElementById('providerIndustryType').innerText = data.industryType;
+		            document.getElementById('providerContactNumber').innerText = data.contactNumber;
+		        })
+		        .catch(error => console.error('Error fetching provider data:', error));
+		}
+
+
+        
+
+
+		// Logout function
+		function logout() {
+		    // Clear session storage, local storage, and cookies
+		    sessionStorage.clear();  // Clear session storage
+			localStorage.removeItem('loginStatus');  // Clear loginStatus if login fails
+			console.log("removed login status");
+		    localStorage.clear();  // Clear local storage
+		    console.log("session and localstorage cleared");
+		    // Clear cookies
+		    document.cookie.split(";").forEach(function(cookie) {
+		        document.cookie = cookie
+		            .replace(/^ +/, "")
+		            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+		    });
+			console.log("Cookies cleared");
+		    // Optional: Clear cache by sending Clear-Site-Data header (browser will delete data)
+		    if ('caches' in window) {
+		        caches.keys().then(function(cacheNames) {
+		            cacheNames.forEach(function(cacheName) {
+		                caches.delete(cacheName);  // Delete all cached data
+						console.log("Delete all cached data");
+		            });
+		        });
+		    }
+
+		    // Send a GET request to logout the user from the server
+		    fetch('/auth/logout', {
+		        method: 'GET'
+		    })
+		    .then(response => {
+		        if (response.ok) {
+		            // Redirect to login page after successful logout
+					console.log("Delete all cached data");
+					window.location.replace('/auth/login');  // Prevent back button navigation
+		        } else {
+		            alert('Logout failed.');
+		        }
+		    })
+		    .catch(error => {
+		        console.error('Logout error:', error);
+		        alert('Error during logout.');
+		    });
+
+		    // Prevent back navigation after logout
+		    window.onload = function() {
+		        history.replaceState(null, document.title, location.pathname + location.search);  // Replace current history entry
+		        window.history.pushState(null, "", location.href);  // Add an empty entry to the history
+				console.log("Replace current history entry and Add an empty entry to the history");
+		    };
+
+		    window.onpopstate = function(event) {
+		        history.go(1);  // Prevent back navigation
+		    };
+		}
+
+		
+		document.addEventListener('DOMContentLoaded', function() {
+				    // Get the current URL path
+				    const currentPath = window.location.pathname;
+
+				    // Select all sidebar links
+				    const links = document.querySelectorAll('.sidebar a');
+
+				    // Loop through links and set the active class on the matching link
+				    links.forEach(link => {
+				        if (link.getAttribute('href') === currentPath) {
+				            link.classList.add('active');  // Add 'active' class to the current link
+				        }
+				    });
+				});
+
+    </script>
+</body>
+</html>
